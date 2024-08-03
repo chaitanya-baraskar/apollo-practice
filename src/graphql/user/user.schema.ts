@@ -28,6 +28,17 @@ export const userTypeDefs = gql`
         role: String
     }
     
+    
+    type AuthPayload {
+        token: String!
+        user: User!
+    }
+    
+    input LoginInput {
+        username: String!
+        password: String!
+    }
+    
      type Query {
         """
         List of the users.
@@ -44,7 +55,6 @@ export const userTypeDefs = gql`
         """
         userByUsername(username: String!): User
     }
-    
     
     """
     Add new user in the system.
@@ -80,12 +90,12 @@ export const userTypeDefs = gql`
         """
         Login user.
         """
-        login(username: String!, password: String!): User
+        login(loginDetails: LoginInput!): AuthPayload!
         
         """
         Register new user.
         """
-        registerUser(input: AddUserInput): User
+        registerUser(userDetails: AddUserInput): User
     }
     
 `;
