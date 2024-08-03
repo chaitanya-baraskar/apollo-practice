@@ -1,8 +1,8 @@
 import logger from "../../utils/logger";
 import {User, UserRole} from "../../models/user";
 import * as mongoose from "mongoose";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const SECRET_KEY = process.env.JWT_SECRET_KEY || "TRUST_ME_THIS_IS_BACKUP";
 
@@ -50,16 +50,16 @@ export const userResolver = {
             console.log(`Received username ${username} and password ${password}`)
             const user = await User.findOne({username});
             if (!user) {
-                throw new Error('User not found');
+                throw new Error("Invalid login credentials");
             }
 
             const valid = await bcrypt.compare(password, user.password);
             if (!valid) {
-                throw new Error('Invalid password');
+                throw new Error("Invalid login credentials");
             }
 
             const token = jwt.sign({userId: user._id, role: user.role}, SECRET_KEY, {
-                expiresIn: '1h',
+                expiresIn: "1h",
             });
 
             return {token, user};
