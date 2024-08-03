@@ -28,12 +28,24 @@ export const userTypeDefs = gql`
         role: String
     }
     
-    
+    """
+    Authentication payload
+    """
     type AuthPayload {
+        """
+        Token generated for making further GraphQL calls.
+        """
         token: String!
+        
+        """
+        User info
+        """
         user: User!
     }
     
+    """
+    Login input for generating token
+    """
     input LoginInput {
         username: String!
         password: String!
@@ -60,7 +72,7 @@ export const userTypeDefs = gql`
     Add new user in the system.
     """
     input AddUserInput{
-         """
+        """
         First name of the user
         """
         firstname: String,
