@@ -5,20 +5,25 @@ import * as mongoose from "mongoose";
 import logger from "./utils/logger";
 import ensureCollections from "./models/init";
 import dotenv from 'dotenv';
+import {authMiddleware} from "./middleware/auth";
+import bodyParser from "body-parser";
 
-const app = express() as any;
 dotenv.config();
 const port = process.env.MONGODB_PORT || 3000;
 const username = process.env.MONGODB_USER_NAME || 3000;
 const password = process.env.MONGODB_PASSWORD || 3000;
 
-// TODO: Integrate username password. It's not working at the moment infra level at the moment.
+const app = express() as any;
+app.use(bodyParser.json());
+app.use(authMiddleware)
+
+// TODO: Integrate username password. It's not working at the moment something at the infra level at the moment.
 const mongoUri = `mongodb://localhost:${port}/blog`;
 
 async function startServer() {
     const server = new ApolloServer({
         typeDefs,
-        resolvers,
+        resolvers
     });
     await server.start()
     server.applyMiddleware({app});

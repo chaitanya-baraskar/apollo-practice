@@ -4,7 +4,7 @@ import * as mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY || "TRUST_ME_THIS_IS_BACKUP";
+export const SECRET_KEY = process.env.JWT_SECRET_KEY || "TRUST_ME_THIS_IS_BACKUP";
 
 interface User {
     username: string
