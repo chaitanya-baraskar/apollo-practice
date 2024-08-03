@@ -1,0 +1,22 @@
+{
+  "name": "apollo-practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaitanya-baraskar/apollo-practice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chaitanya-baraskar/apollo-practice/issues"
+  },
+  "homepage": "https://github.com/chaitanya-baraskar/apollo-practice#readme",
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "express": "^4.19.2",
+    "graphql": "^16.9.0"
+  }
+}
