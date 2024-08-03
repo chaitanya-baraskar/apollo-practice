@@ -1,8 +1,19 @@
 import express from 'express';
 import {ApolloServer} from 'apollo-server-express';
 import {resolvers, typeDefs} from './graphql/schema';
+import * as mongoose from "mongoose";
+import logger from "./utils/logger";
+import ensureCollections from "./models/init";
+import dotenv from 'dotenv';
 
 const app = express() as any;
+dotenv.config();
+const port = process.env.MONGODB_PORT || 3000;
+const username = process.env.MONGODB_USER_NAME || 3000;
+const password = process.env.MONGODB_PASSWORD || 3000;
+
+// TODO: Integrate username password. It's not working at the moment infra level at the moment.
+const mongoUri = `mongodb://localhost:${port}/blog`;
 
 async function startServer() {
     const server = new ApolloServer({
@@ -12,8 +23,16 @@ async function startServer() {
     await server.start()
     server.applyMiddleware({app});
     app.listen({port: 4000}, () => {
-        console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
+        logger.info(`Server ready at http://localhost:4000${server.graphqlPath}`);
     });
 }
 
-startServer();
+mongoose.connect(mongoUri)
+    .then(async () => {
+        logger.info('Connected to MongoDB');
+        await ensureCollections();
+        startServer();
+    })
+    .catch(err => {
+        logger.error('Error connecting to MongoDB', err);
+    });

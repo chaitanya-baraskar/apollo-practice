@@ -37,14 +37,19 @@ export const userTypeDefs = gql`
         """
         Filter user by ID.
         """
-        user(username: String!): User
+        user(id: ID!): User
+        
+        """
+        Get user by username.
+        """
+        userByUsername(username: String!): User
     }
     
     
     """
     Add new user in the system.
     """
-    input AddUser{
+    input AddUserInput{
          """
         First name of the user
         """
@@ -61,6 +66,11 @@ export const userTypeDefs = gql`
         username: String
         
         """
+        Password chosen by the user.
+        """
+        password: String
+        
+        """
         Role of the user.
         """
         role: String
@@ -75,7 +85,7 @@ export const userTypeDefs = gql`
         """
         Register new user.
         """
-        registerUser(userDetails: AddUser): User
+        registerUser(input: AddUserInput): User
     }
     
 `;
