@@ -10,13 +10,8 @@ const logger = createLogger({
     ),
     defaultMeta: {service: 'user-service'},
     transports: [
-        new transports.Console({
-            format: format.combine(
-                format.colorize(),
-                format.simple()
-            ),
-        })
-    ],
+        new transports.Console()
+    ]
 });
 
 export default logger;
