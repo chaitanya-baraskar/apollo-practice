@@ -5,7 +5,7 @@ export const userTypeDefs = gql`
         """
         ID of the user.
         """
-        id: String
+        _id: String
         
         """
         First name of the user
@@ -26,6 +26,11 @@ export const userTypeDefs = gql`
         Role of the user.
         """
         role: String
+        
+        """
+        List of blogs which belongs to the user.
+        """
+        blogs: [Blog!]!
     }
     
     """
