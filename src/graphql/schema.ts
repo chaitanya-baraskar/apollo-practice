@@ -2,6 +2,8 @@ import {gql} from "apollo-server-express";
 import {userTypeDefs} from "./user/user.schema";
 import { mergeResolvers } from '@graphql-tools/merge';
 import {userResolver} from "./user/user.resolvers";
+import {blogTypeDefs} from "./blog/blog.schema";
+import {blogResolvers} from "./blog/blog.resolvers";
 
 
 const baseTypeDefs = gql`
@@ -10,9 +12,11 @@ const baseTypeDefs = gql`
 `;
 
 export const typeDefs = [
-    userTypeDefs
+    userTypeDefs,
+    blogTypeDefs
 ]
 
 export const resolvers = mergeResolvers([
-    userResolver
+    userResolver,
+    blogResolvers
 ])

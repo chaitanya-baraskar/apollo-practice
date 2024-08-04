@@ -27,6 +27,6 @@ const userSchema = new Schema<IUser>({
         timestamps: true
     })
 
-userSchema.index({role: 1})
+userSchema.index({role: 1, username: 1})
 
 export const User = model<IUser>('user', userSchema);
