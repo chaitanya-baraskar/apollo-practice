@@ -4,6 +4,7 @@ import * as mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {Blog} from "../../models/blog";
+import {ValidateRequest} from "../../middleware/rbac";
 
 export const SECRET_KEY = process.env.JWT_SECRET_KEY || "TRUST_ME_THIS_IS_BACKUP";
 
@@ -25,7 +26,6 @@ interface LoginInput {
     username: string;
     password: string;
 }
-
 
 export const userResolver = {
     Query: {
@@ -77,8 +77,10 @@ export const userResolver = {
         },
         registerUser: async (
             _: any,
-            {userDetails}: { userDetails: AddUser }
+            {userDetails}: { userDetails: AddUser },
+            context: any
         ) => {
+            ValidateRequest(context, "registerUser")
             const {firstname, lastname, username, password, role} = userDetails
             const hashedPassword = await bcrypt.hash(password, 10);
             let newUser = new User({

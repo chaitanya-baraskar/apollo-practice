@@ -7,6 +7,7 @@ import ensureCollections from "./models/init";
 import dotenv from 'dotenv';
 import {authMiddleware} from "./middleware/auth";
 import bodyParser from "body-parser";
+import './middleware/express';
 
 dotenv.config();
 const port = process.env.MONGODB_PORT || 3000;
@@ -15,6 +16,7 @@ const password = process.env.MONGODB_PASSWORD || 3000;
 
 const app = express() as any;
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(authMiddleware)
 
 // TODO: Integrate username password. It's not working at the moment something at the infra level at the moment.
@@ -23,7 +25,11 @@ const mongoUri = `mongodb://localhost:${port}/blog`;
 async function startServer() {
     const server = new ApolloServer({
         typeDefs,
-        resolvers
+        resolvers,
+        context: ({req}) => {
+            const user = req.user || null;
+            return {user};
+        },
     });
     await server.start()
     server.applyMiddleware({app});

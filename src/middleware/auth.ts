@@ -1,14 +1,21 @@
-import express, {NextFunction, Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import {SECRET_KEY} from "../graphql/user/user.resolvers";
 import logger from "../utils/logger";
+import {UserRole} from "../models/user";
 
 const excludedOperations = ['registerUser', 'login', 'IntrospectionQuery'];
+
+export interface UserPayload {
+    id: string;
+    role: UserRole;
+}
+
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers["x-auth-token"] as string;
     const operationName = req.body.operationName
 
-    if (!operationName){
+    if (!operationName) {
         return next();
     }
 
@@ -22,22 +29,14 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     try {
-        const payload = jwt.verify(token, SECRET_KEY);
+        const payload = jwt.verify(token, SECRET_KEY) as { userId: string; role: UserRole };
         logger.info(`Received payload ${payload}`)
+        req.user = {
+            id: payload.userId,
+            role: payload.role
+        }
         return next();
     } catch (err) {
         return res.status(401).json({message: 'Invalid or expired token'});
     }
-}
-
-
-export function getLoginUser(req: express.Request) {
-  const token = req.headers["x-auth-token"] as string;
-  if (token) {
-    try {
-      return jwt.verify(token, SECRET_KEY as string);
-    } catch (error) {
-      throw Error("Session Expired!!");
-    }
-  }
 }

@@ -82,7 +82,7 @@ export const blogTypeDefs = gql`
     """
     Add blog mutation.
     """
-    addBlog(blogDetails: AddBlogInput!): Blog
+    createBlog(blogDetails: AddBlogInput!): Blog
     
     """
     Update blog mutation.

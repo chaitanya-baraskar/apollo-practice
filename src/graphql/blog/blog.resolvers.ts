@@ -2,6 +2,7 @@ import logger from "../../utils/logger";
 import {User} from "../../models/user";
 import {Blog} from "../../models/blog";
 import {Types} from "mongoose";
+import {ValidateRequest} from "../../middleware/rbac";
 
 export const blogResolvers = {
     Query: {
@@ -15,11 +16,10 @@ export const blogResolvers = {
         },
     },
     Mutation: {
-        addBlog: async (_: any, {blogDetails}: { blogDetails: any }) => {
+        createBlog: async (_: any, {blogDetails}: { blogDetails: any }, context: any) => {
+            ValidateRequest(context, "createBlog")
             const {title, content, username} = blogDetails;
-
             let result = await User.findOne({"username": username})
-
             if (!result) {
                 logger.error(`Unable to find user with username ${username}`)
                 throw new Error(`User with username ${username} not found.`)
@@ -49,11 +49,10 @@ export const blogResolvers = {
             }
         },
 
-        updateBlog: async (_: any, {blogDetails}: { blogDetails: any }) => {
+        updateBlog: async (_: any, {blogDetails}: { blogDetails: any }, context: any) => {
+            ValidateRequest(context, "updateBlog")
             const {id, newTitle, newContent} = blogDetails;
-
             logger.info(`Updating blog with ID: ${id}`);
-
             try {
                 const blog = await Blog.findOne({"_id": new Types.ObjectId(id)});
                 if (!blog) {
@@ -76,7 +75,9 @@ export const blogResolvers = {
             }
         },
 
-        deleteBlog: async (_: any, {id}: { id: any }) => {
+        deleteBlog: async (_: any, {id}: { id: any }, context: any) => {
+            // TODO: Implement decorator for this.
+            ValidateRequest(context, "deleteBlog")
             logger.info(`Attempting to delete blog ${id}`)
             const result = await Blog.findOneAndDelete({"_id": new Types.ObjectId(id)})
             if (!result) {
