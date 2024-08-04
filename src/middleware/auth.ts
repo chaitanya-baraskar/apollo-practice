@@ -5,6 +5,7 @@ import logger from "../utils/logger";
 import {UserRole} from "../models/user";
 
 const excludedOperations = ['registerUser', 'login', 'IntrospectionQuery'];
+const authToken = "x-auth-token";
 
 export interface UserPayload {
     id: string;
@@ -12,11 +13,15 @@ export interface UserPayload {
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers["x-auth-token"] as string;
+    const token = req.headers[authToken] as string;
     const operationName = req.body.operationName
 
     if (!operationName) {
         return next();
+    }
+
+    if (!token){
+        throw new Error(`header ${authToken} not available`)
     }
 
     // Checking whether we need to skip checking token.
