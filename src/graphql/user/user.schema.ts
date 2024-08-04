@@ -113,6 +113,11 @@ export const userTypeDefs = gql`
         Register new user.
         """
         registerUser(userDetails: AddUserInput): User
+        
+        """
+        Delete user.
+        """
+        deleteUser(id: ID!): Boolean
     }
     
 `;

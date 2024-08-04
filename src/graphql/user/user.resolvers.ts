@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {Blog} from "../../models/blog";
 import {ValidateRequest} from "../../middleware/rbac";
+import {Types} from "mongoose";
+import {UserPayload} from "../../middleware/auth";
 
 export const SECRET_KEY = process.env.JWT_SECRET_KEY || "TRUST_ME_THIS_IS_BACKUP";
 
@@ -31,7 +33,7 @@ export const userResolver = {
     Query: {
         users: async () => {
             logger.debug("Fetching all user information")
-            const users:any = await User.find();
+            const users: any = await User.find();
             return users.map(async (user: any) => {
                 const blogs = await Blog.find({"user": user._id});
                 return {...user.toObject(), blogs};
@@ -40,9 +42,9 @@ export const userResolver = {
         user: async (_: any, id: string) => {
             logger.debug(`Fetching user with ID ${id}`)
             const user = await User.findById(new mongoose.Types.ObjectId(id));
-            if (user){
+            if (user) {
                 const blogs = await Blog.find({"user": user._id});
-                return { ...user.toObject(), blogs };
+                return {...user.toObject(), blogs};
             }
             return null
         },
@@ -77,10 +79,8 @@ export const userResolver = {
         },
         registerUser: async (
             _: any,
-            {userDetails}: { userDetails: AddUser },
-            context: any
+            {userDetails}: { userDetails: AddUser }
         ) => {
-            ValidateRequest(context, "registerUser")
             const {firstname, lastname, username, password, role} = userDetails
             const hashedPassword = await bcrypt.hash(password, 10);
             let newUser = new User({
@@ -101,6 +101,20 @@ export const userResolver = {
                     logger.error(`Failed to save record with error ${reason}`);
                     throw new Error(`Failed to save record: ${reason.message}`);
                 });
+        },
+        deleteUser: async (_: any, {id}: { id: any }, context: any) => {
+            ValidateRequest(context, "deleteUser")
+            const userPayload = context.user as UserPayload;
+            if (userPayload.id == id){
+                throw new Error(`Bruhhh!!! Cannot delete yourself.`)
+            }
+            logger.info(`Attempting to delete user ${id}`)
+            const result = await User.findOneAndDelete({"_id": new Types.ObjectId(id)})
+            if (!result) {
+                logger.error(`User with ID ${id} not found`)
+                throw new Error(`Failed to delete user with ID ${id}.`)
+            }
+            return true
         }
     }
 }
